@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/mem.do")
+//@WebServlet("/mem.do")
 public class MemberController extends HttpServlet{
 	private static final long serialVersionUID = 1L; //직렬화-객체를 바이트의 배열로 변환해서 저장, 1L-객체 식별 용도
 	MemberDAO memberDAO;
