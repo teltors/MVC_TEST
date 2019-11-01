@@ -44,21 +44,47 @@ public class MemberController extends HttpServlet {
 		String action = request.getPathInfo(); // /addMember.do
 		
 		System.out.println("action:" + action);
+		// 맴버 리스트 보기
 		if (action == null || action.equals("/listMembers.do")) {
 			List<MemberVO> membersList = memberDAO.listMembers();
 			request.setAttribute("membersList", membersList);
 			nextPage = "/test02/listMembers.jsp";
-		} else if (action.equals("/addMember.do")) {
+		} //맴버 추가하기
+		else if (action.equals("/addMember.do")) {
 			String id = request.getParameter("id");
 			String pwd = request.getParameter("pwd");
 			String name = request.getParameter("name");
 			String email = request.getParameter("email");
 			MemberVO memberVO = new MemberVO(id, pwd, name, email);
 			memberDAO.addMember(memberVO);
+			request.setAttribute("msg", "addMember"); 
 			nextPage = "/member/listMembers.do";
-		} else if (action.equals("/memberForm.do")) {
+		}// 회원가입하기 버튼 클릭시 memberForm.jsp 로 이동
+		else if (action.equals("/memberForm.do")) {
 			nextPage = "/test02/memberForm.jsp";
-		} else {
+		}// 수정하기 클릭시 modMemberForm.jsp로 이동 (클릭한 id에 해당하는 정보 필요-get방식으로 넘어옴)
+		else if(action.equals("/modMemberForm.do")) { 
+			String id = request.getParameter("id");
+			MemberVO memInfo = memberDAO.findMember(id);
+			request.setAttribute("memInfo", memInfo); 
+			nextPage = "/test02/modMemberForm.jsp";
+		} //회원 정보 수정
+		else if(action.equals("/modMember.do")){
+			String id = request.getParameter("id");
+			String pwd = request.getParameter("pwd");
+			String name = request.getParameter("name");
+			String email = request.getParameter("email");
+			MemberVO memberVO = new MemberVO(id, pwd, name, email);
+			memberDAO.modMember(memberVO);
+			request.setAttribute("msg", "modified");
+			nextPage="/member/listMembers.do";
+		} //회원 삭제
+		else if(action.equals("/delMember.do")) {
+			String id = request.getParameter("id");
+			memberDAO.delMember(id);
+			request.setAttribute("msg", "deleted");
+			nextPage="/member/listMembers.do";
+		}else {
 			List<MemberVO> membersList = memberDAO.listMembers();
 			request.setAttribute("membersList", membersList);
 			nextPage = "/test02/listMembers.jsp";
