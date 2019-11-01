@@ -1,4 +1,4 @@
-package mvc2;
+package member;
 
 import java.sql.Connection;
 import java.sql.Date;
