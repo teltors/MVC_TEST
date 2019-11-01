@@ -1,4 +1,4 @@
-package sec2.ex01;
+package mvc2;
 
 import java.io.IOException;
 import java.util.List;
@@ -48,7 +48,7 @@ public class MemberController extends HttpServlet {
 		if (action == null || action.equals("/listMembers.do")) {
 			List<MemberVO> membersList = memberDAO.listMembers();
 			request.setAttribute("membersList", membersList);
-			nextPage = "/test02/listMembers.jsp";
+			nextPage = "/mvc2/listMembers.jsp";
 		} //맴버 추가하기
 		else if (action.equals("/addMember.do")) {
 			String id = request.getParameter("id");
@@ -61,13 +61,13 @@ public class MemberController extends HttpServlet {
 			nextPage = "/member/listMembers.do";
 		}// 회원가입하기 버튼 클릭시 memberForm.jsp 로 이동
 		else if (action.equals("/memberForm.do")) {
-			nextPage = "/test02/memberForm.jsp";
+			nextPage = "/mvc2/memberForm.jsp";
 		}// 수정하기 클릭시 modMemberForm.jsp로 이동 (클릭한 id에 해당하는 정보 필요-get방식으로 넘어옴)
 		else if(action.equals("/modMemberForm.do")) { 
 			String id = request.getParameter("id");
 			MemberVO memInfo = memberDAO.findMember(id);
 			request.setAttribute("memInfo", memInfo); 
-			nextPage = "/test02/modMemberForm.jsp";
+			nextPage = "/mvc2/modMemberForm.jsp";
 		} //회원 정보 수정
 		else if(action.equals("/modMember.do")){
 			String id = request.getParameter("id");
@@ -87,7 +87,7 @@ public class MemberController extends HttpServlet {
 		}else {
 			List<MemberVO> membersList = memberDAO.listMembers();
 			request.setAttribute("membersList", membersList);
-			nextPage = "/test02/listMembers.jsp";
+			nextPage = "/mvc2/listMembers.jsp";
 		}
 		RequestDispatcher dispatch = request.getRequestDispatcher(nextPage);
 		dispatch.forward(request, response);

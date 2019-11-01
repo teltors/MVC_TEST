@@ -1,4 +1,4 @@
-package sec2.ex01;
+package mvc2;
 
 import java.sql.Connection;
 import java.sql.Date;
