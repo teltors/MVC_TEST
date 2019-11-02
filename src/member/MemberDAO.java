@@ -20,7 +20,7 @@ public class MemberDAO {
 	//DB
 	public MemberDAO() {
 		try {
-			Context ctx = new InitialContext();
+			Context ctx = new InitialContext();  //application 실행을 위해 밑바탕에 깔려져 있는 정보들과 환경들을 Context라 한다.
 			Context envContext=(Context) ctx.lookup("java:/comp/env");
 			dataFactory = (DataSource) envContext.lookup("jdbc/oracle");
 		}catch (Exception e) {
