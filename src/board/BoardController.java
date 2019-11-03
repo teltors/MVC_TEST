@@ -2,6 +2,7 @@ package board;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FileUtils;
 
 @WebServlet("/board/*")
 public class BoardController extends HttpServlet{
@@ -61,6 +63,7 @@ public class BoardController extends HttpServlet{
 				nextPage= "/mvc2_board/articleForm.jsp";
 				
 			} else if (action.equals("/addArticle.do")) {  //새글 추가
+				int articleNO=0;
 				Map<String, String> articleMap = upload(req, resp);  //파일 업로드 기능을 사용하기위해 upload()로 요청을 전달
 				String title = articleMap.get("title");		//aritcleMap에 저장된 글 정보를 다시 가져옴
 				String content = articleMap.get("content");
@@ -71,8 +74,23 @@ public class BoardController extends HttpServlet{
 				articleVO.setTitle(title);
 				articleVO.setContent(content);
 				articleVO.setImageFileName(imageFileName);
-				boardService.addArticle(articleVO);  //글쓰기 창에서 입력된 정보를 ArticleVO객체에 설정한후 addArticle()로 전달
-				nextPage = "/board/listArticles.do";
+				articleNO = boardService.addArticle(articleVO);  //테이블에 새 글을 추가한 후 새 글에 대한 글 번호를 가져옴
+				
+				if(imageFileName != null && imageFileName.length() != 0) {	//파일을 첨부한 경우에만 수행
+					File srcFile = new File(ARTICLE_IMAGE_REPO + "\\" + "temp" + "\\" +imageFileName);
+					File destDir = new File(ARTICLE_IMAGE_REPO + "\\" + articleNO);
+					destDir.mkdirs(); //글번호로 폴더 생성
+					FileUtils.moveFileToDirectory(srcFile, destDir, true);
+				}
+				PrintWriter pw = resp.getWriter();
+				// 새글 등록 메시지를 나타낸 후 자바스크립트 location객체의 href 속성을 이용해 글 목록 요청
+				pw.print("<script>" 
+				         +"  alert('새글을 추가했습니다.');" 
+						 +" location.href='"+req.getContextPath()+"/board/listArticles.do';"
+				         +"</script>");
+				
+				 
+				return;
 			}
 			
 			RequestDispatcher dispatch = req.getRequestDispatcher(nextPage);
@@ -112,7 +130,7 @@ public class BoardController extends HttpServlet{
 						}
 						
 						String fileName = fileItem.getName().substring(idx + 1);
-						File uploadFile = new File(currentDirPath + "\\" + fileName);
+						File uploadFile = new File(currentDirPath + "\\temp\\" + fileName);
 						fileItem.write(uploadFile);
 						
 					}

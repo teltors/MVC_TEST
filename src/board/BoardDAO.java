@@ -90,10 +90,11 @@ public class BoardDAO {
 	}
 
 	//글 추가
-	public void insertNewArticle(ArticleVO article) {
+	public int insertNewArticle(ArticleVO article) {
+		int articleNO=getNewArticleNO();
 		try {
 			conn=dataFactory.getConnection();
-			int articleNO = getNewArticleNO(); //새글을 추가하기전에 새글에 대한 글번호 가져오기
+			
 			int parentNO = article.getParentNO();
 			String title = article.getTitle();
 			String content = article.getContent();
@@ -116,6 +117,8 @@ public class BoardDAO {
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+		
+		return articleNO;
 	}
 }
 
