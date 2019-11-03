@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"
+    isELIgnored="false"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath }"/>
@@ -68,7 +69,7 @@
 			</c:when>
 		</c:choose>
 	</table>
-	<a class="cls1" href="#">
+	<a class="cls1" href="${contextPath }/board/articleForm.do">
 		<p class="cls2">글쓰기</p>
 	</a>
 </body>

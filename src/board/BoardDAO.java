@@ -34,7 +34,7 @@ public class BoardDAO {
 		try {
 			conn = dataFactory.getConnection();
 			//계층형 SQL
-			String query = "SELECT LEVEL, articleNO, parentNO, title, content, id, writreDate" 
+			String query = "SELECT LEVEL, articleNO, parentNO, title, content, id, writeDate" 
 							+ " from t_board" 
 							+ " START WITH parentNO=0"
 							+ " CONNECT BY PRIOR articleNO=parentNO"
@@ -69,5 +69,68 @@ public class BoardDAO {
 		}
 		return articlesList;
 	}
+	
+	//글 조회
+	private int getNewArticleNO() {
+		try {
+			conn = dataFactory.getConnection();
+			String query = "SELECT max(articleNO) from t_board";  //기본 글 번호 중 가장 큰 번호를 조회
+			System.out.println(query);
+			pstmt = conn.prepareStatement(query);
+			ResultSet rs = pstmt.executeQuery(query);
+			if(rs.next()) 	//가장 큰 번호에 1을 더한 번호를 반환
+				return (rs.getInt(1)+1);
+			rs.close();
+			pstmt.close();
+			conn.close();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
 
+	//글 추가
+	public void insertNewArticle(ArticleVO article) {
+		try {
+			conn=dataFactory.getConnection();
+			int articleNO = getNewArticleNO(); //새글을 추가하기전에 새글에 대한 글번호 가져오기
+			int parentNO = article.getParentNO();
+			String title = article.getTitle();
+			String content = article.getContent();
+			String id = article.getId();
+			String imageFileName = article.getImageFileName();
+			String query = "INSERT INTO t_board (articleNO, parentNO, title, content, imageFileName, id)" 
+							+ " VALUES (?, ?, ?, ?, ?, ?)";
+			System.out.println(query);
+			pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, articleNO);
+			pstmt.setInt(2, parentNO);
+			pstmt.setString(3, title);
+			pstmt.setString(4, content);
+			pstmt.setString(5, imageFileName);
+			pstmt.setString(6, id);
+			pstmt.executeUpdate();
+			pstmt.close();
+			conn.close();
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
