@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -24,8 +25,9 @@ public class BoardController extends HttpServlet{
 	BoardService boardService;
 	ArticleVO articleVO;
 	
-	public void init() throws ServletException{
+	public void init(ServletConfig config) throws ServletException{
 		boardService =new BoardService(); //서블릿 초기화시 BoardService객체 생성
+		articleVO = new ArticleVO();
 	}
 	
 	@Override
@@ -46,11 +48,11 @@ public class BoardController extends HttpServlet{
 		System.out.println("action: " + action);
 		try {
 			List<ArticleVO> articlesList = new ArrayList<ArticleVO>(); //배열화
-			if (action==null) { //요청명이 null이면 boardlist페이지로 이동
+			if (action==null) { //요청명이 null이면 board list 페이지로 이동
 				articlesList = boardService.listArticles();
 				req.setAttribute("articlesList", articlesList);
 				nextPage = "/mvc2_board/listArticles.jsp";  
-			} else if (action.equals("/listArticles.do")) {  //listArticles.do요청이면 boardlist페이지로 이동
+			} else if (action.equals("/listArticles.do")) {  //listArticles.do요청이면 board list 페이지로 이동
 				articlesList = boardService.listArticles();
 				req.setAttribute("articlesList", articlesList);
 				nextPage = "/mvc2_board/listArticles.jsp";  

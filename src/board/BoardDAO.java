@@ -29,7 +29,7 @@ public class BoardDAO {
 
 	public List<ArticleVO> selectAllArticles() {
 		
-		List articlesList = new ArrayList();
+		List<ArticleVO> articlesList = new ArrayList<ArticleVO>();
 		
 		try {
 			conn = dataFactory.getConnection();
