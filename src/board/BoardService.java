@@ -39,4 +39,8 @@ public class BoardService {
 		return articleNOList;  //컨트롤러로 반환
 	}
 
+	public int addReply(ArticleVO article) {
+		return boardDAO.insertNewArticle(article);
+	}
+
 }

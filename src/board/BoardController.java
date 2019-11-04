@@ -15,6 +15,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -46,6 +47,7 @@ public class BoardController extends HttpServlet{
 		String nextPage="";
 		req.setCharacterEncoding("utf-8");
 		resp.setContentType("text/html; charset=utf-8");
+		HttpSession session;
 		
 		String action = req.getPathInfo(); //요청명가져오기
 		System.out.println("action: " + action);
@@ -146,6 +148,40 @@ public class BoardController extends HttpServlet{
 				         +"</script>");
 				return;
 				
+			}else if(action.equals("/replyForm.do")) {	//답글 요청
+				int parentNO = Integer.parseInt(req.getParameter("parentNO"));
+				session = req.getSession();		//답글창 요청시 미리 부모 글 번호를 parentNO 속성으로 세션에 저장
+				session.setAttribute("parentNO", parentNO);
+				nextPage = "/mvc2_board/replyForm.jsp";
+				
+			}else if(action.equals("/addReply.do")) {	//답글 추가
+				session = req.getSession();
+				int parentNO = (Integer) session.getAttribute("parentNO");
+				session.removeAttribute("parentNO");		//답글 전송 시 세션에 저장된 parentNO를 가져옵니다.
+				
+				Map<String, String> articleMap = upload(req, resp);
+				String title = articleMap.get("title");
+				String content = articleMap.get("content");
+				String imageFileName = articleMap.get("imageFileName");
+				articleVO.setParentNO(parentNO);
+				articleVO.setId("lee");
+				articleVO.setTitle(title);
+				articleVO.setContent(content);
+				articleVO.setImageFileName(imageFileName);
+				int articleNO = boardService.addReply(articleVO);
+				if(imageFileName != null && imageFileName.length() != 0) {
+					File srcFile = new File(ARTICLE_IMAGE_REPO + "\\" + "temp" + "\\" + imageFileName);
+					File destDir = new File(ARTICLE_IMAGE_REPO + "\\" + articleNO);
+					destDir.mkdirs();
+					FileUtils.moveFileToDirectory(srcFile, destDir, true);
+							
+				}
+				PrintWriter pw = resp.getWriter();
+				pw.print("<script>" 
+				         +"  alert('답글을 추가했습니다.');" 
+						 +" location.href='"+req.getContextPath()+"/board/viewArticle.do?articleNO="+articleNO+"';"
+				         +"</script>");
+				return;
 			}
 			
 			RequestDispatcher dispatch = req.getRequestDispatcher(nextPage);
