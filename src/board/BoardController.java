@@ -46,6 +46,7 @@ public class BoardController extends HttpServlet{
 		String nextPage="";
 		req.setCharacterEncoding("utf-8");
 		resp.setContentType("text/html; charset=utf-8");
+		
 		String action = req.getPathInfo(); //요청명가져오기
 		System.out.println("action: " + action);
 		try {
@@ -54,6 +55,7 @@ public class BoardController extends HttpServlet{
 				articlesList = boardService.listArticles();
 				req.setAttribute("articlesList", articlesList);
 				nextPage = "/mvc2_board/listArticles.jsp";  
+				
 			} else if (action.equals("/listArticles.do")) {  //listArticles.do요청이면 board list 페이지로 이동
 				articlesList = boardService.listArticles();
 				req.setAttribute("articlesList", articlesList);
@@ -88,9 +90,45 @@ public class BoardController extends HttpServlet{
 				         +"  alert('새글을 추가했습니다.');" 
 						 +" location.href='"+req.getContextPath()+"/board/listArticles.do';"
 				         +"</script>");
-				
-				 
+							
 				return;
+				
+			} else if(action.equals("/viewArticle.do")) {		//글 상세창
+				String articleNO = req.getParameter("articleNO");
+				articleVO=boardService.viewArticle(Integer.parseInt(articleNO));
+				req.setAttribute("article", articleVO);
+				nextPage="/mvc2_board/viewArticle.jsp";
+				
+			}else if(action.equals("/modArticle.do")) {		//글 수정
+				Map<String, String> articleMap = upload(req, resp);
+				int articleNO = Integer.parseInt(articleMap.get("articleNO"));
+				articleVO.setArticleNO(articleNO);
+				String title = articleMap.get("title");
+				String content = articleMap.get("content");
+				String imageFileName = articleMap.get("imageFileName");
+				articleVO.setParentNO(0);
+				articleVO.setId("hong");
+				articleVO.setTitle(title);
+				articleVO.setContent(content);
+				articleVO.setImageFileName(imageFileName);
+				boardService.modArticle(articleVO);		//modArticle로 정보 전송
+				if(imageFileName != null && imageFileName.length() != 0) {
+					String originalFileName = articleMap.get("originalFileName");
+					File srcFile = new File(ARTICLE_IMAGE_REPO + "\\" + "temp"+ "\\" + imageFileName);
+					File destDir = new File(ARTICLE_IMAGE_REPO + "\\" +articleNO);
+					destDir.mkdirs();
+					FileUtils.moveFileToDirectory(srcFile, destDir, true);
+					
+					File oldFile = new File(ARTICLE_IMAGE_REPO + "\\" +articleNO + "\\" + originalFileName);	//전송된 originalFileName으로 기존의 파일 삭제
+					oldFile.delete();
+				}
+				PrintWriter pw = resp.getWriter();
+				pw.print("<script>" 
+				         +"  alert('새글을 수정했습니다.');" 
+						 +" location.href='"+req.getContextPath()+"/board/viewArticle.do?articleNO=" +articleNO + "';"
+				         +"</script>");
+				return;
+				
 			}
 			
 			RequestDispatcher dispatch = req.getRequestDispatcher(nextPage);

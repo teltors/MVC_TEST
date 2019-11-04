@@ -20,4 +20,17 @@ public class BoardService {
 		
 	}
 
+	public ArticleVO viewArticle(int articleNO) {
+		ArticleVO article = null;
+		article = boardDAO.selectArticle(articleNO);
+		return article;
+	}
+
+	
+
+	public void modArticle(ArticleVO article) {
+		boardDAO.updateArticle(article);
+		
+	}
+
 }
