@@ -22,13 +22,26 @@
 	    obj.action="${contextPath}/board/listArticles.do";
 	    obj.submit();
      }
+     
+    
  	/* 수정하기 클릭시 창 abled되고 버튼 일부 사라지고 일부 나타남*/
 	 function fn_enable(obj){  
+		 var id = document.getElementById("img");
+		 
+		 if( id != null){
+		
+		 document.getElementById("i_imageFileName").disabled=false;
 		 document.getElementById("i_title").disabled=false;
 		 document.getElementById("i_content").disabled=false;
-		 document.getElementById("i_imageFileName").disabled=false;
 		 document.getElementById("tr_btn_modify").style.display="block";
 		 document.getElementById("tr_btn").style.display="none";
+		 } else{
+			 document.getElementById("i_content").disabled=false;
+			 document.getElementById("i_title").disabled=false;
+			 document.getElementById("tr_btn_modify").style.display="block";
+			 document.getElementById("tr_btn").style.display="none";
+		 }
+		 
 	 }
 	 
 	 function fn_modify_article(obj){
@@ -100,7 +113,7 @@
  
 <c:if test="${not empty article.imageFileName && article.imageFileName!='null' }">  
 <tr>
-   <td width="150" align="center" bgcolor="#FF9933" rowspan="2">
+   <td id="img" width="150" align="center" bgcolor="#FF9933" rowspan="2">
       이미지
    </td>
    <td>
