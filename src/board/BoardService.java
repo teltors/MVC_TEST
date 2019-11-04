@@ -33,4 +33,10 @@ public class BoardService {
 		
 	}
 
+	public List<Integer> removeArticle(int articleNO) {
+		List<Integer> articleNOList = boardDAO.selectRemovedArticles(articleNO);
+		boardDAO.deleteArticle(articleNO);
+		return articleNOList;  //컨트롤러로 반환
+	}
+
 }

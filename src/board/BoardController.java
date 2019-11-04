@@ -124,8 +124,25 @@ public class BoardController extends HttpServlet{
 				}
 				PrintWriter pw = resp.getWriter();
 				pw.print("<script>" 
-				         +"  alert('새글을 수정했습니다.');" 
+				         +"  alert('글을 수정했습니다.');" 
 						 +" location.href='"+req.getContextPath()+"/board/viewArticle.do?articleNO=" +articleNO + "';"
+				         +"</script>");
+				return;
+				
+			}else if(action.equals("/removeArticle.do")) {	//글 제거
+				int articleNO = Integer.parseInt(req.getParameter("articleNO"));
+				List<Integer> articleNOList = boardService.removeArticle(articleNO); //articleNO 값에 대한 글을 삭제한 후 삭제된 부모글과 자식 글의articleNO 목록 가저옴
+				for(int _articleNO : articleNOList) {
+					File imgDir = new File(ARTICLE_IMAGE_REPO + "\\" + _articleNO);
+					if(imgDir.exists()) {
+						FileUtils.deleteDirectory(imgDir);		//삭제글의 이미지 폴더 삭제
+					}
+				}
+				
+				PrintWriter pw = resp.getWriter();
+				pw.print("<script>" 
+				         +"  alert('글을 삭제했습니다.');" 
+						 +" location.href='"+req.getContextPath()+"/board/listArticles.do';"
 				         +"</script>");
 				return;
 				
